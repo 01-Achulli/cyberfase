@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CyberSafe | Diagnóstico de Ciberseguridad</title>
+<style>
+:root{
+  --bg:#06111f;--panel:rgba(9,25,43,.82);--line:#1e5578;
+  --cyan:#37d9ff;--blue:#287cff;--green:#39e879;--red:#ff5d6c;
+  --text:#edf8ff;--muted:#9bb5c7;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;font-family:Inter,Arial,sans-serif;color:var(--text);
+ background:
+ radial-gradient(circle at 10% 10%,rgba(40,124,255,.20),transparent 28%),
+ radial-gradient(circle at 90% 15%,rgba(55,217,255,.15),transparent 25%),
+ linear-gradient(135deg,#020812,#07192b 55%,#03101d);
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;
+ background-image:linear-gradient(rgba(55,217,255,.15) 1px,transparent 1px),
+ linear-gradient(90deg,rgba(55,217,255,.15) 1px,transparent 1px);
+ background-size:45px 45px;
+}
+.wrap{width:min(1050px,92%);margin:auto;padding:28px 0 40px;position:relative}
+header{text-align:center;margin-bottom:25px}
+.badge{display:inline-block;padding:7px 15px;border:1px solid rgba(55,217,255,.45);
+ border-radius:999px;color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:1.5px;
+ background:rgba(55,217,255,.07)}
+.logo{font-size:55px;margin:12px 0 0;filter:drop-shadow(0 0 15px rgba(55,217,255,.5))}
+h1{font-size:clamp(30px,5vw,52px);margin:5px 0 8px;letter-spacing:-1px}
+header p{color:var(--muted);margin:0;font-size:16px}
+.formula{
+ margin:20px auto 0;width:max-content;max-width:100%;padding:12px 22px;
+ border:1px solid var(--line);border-radius:14px;background:rgba(5,20,35,.8);
+ font-weight:700;box-shadow:0 0 25px rgba(40,124,255,.12)
+}
+.formula span{color:var(--green);font-size:20px}
+.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:20px}
+.card{
+ background:var(--panel);border:1px solid rgba(55,217,255,.22);border-radius:22px;
+ padding:25px;backdrop-filter:blur(12px);box-shadow:0 20px 50px rgba(0,0,0,.28)
+}
+.card h2{margin:0 0 7px;font-size:22px}.sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.q{
+ display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;
+ padding:17px;margin:13px 0;border-radius:16px;background:rgba(3,15,27,.75);
+ border:1px solid #21465e;transition:.2s
+}
+.q:hover{border-color:var(--cyan);transform:translateY(-2px)}
+.letter{
+ width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
+ background:rgba(55,217,255,.09);color:var(--cyan);font-size:21px;font-weight:900
+}
+.qtitle{font-weight:700;line-height:1.4}.qdesc{color:var(--muted);font-size:12px;margin-top:4px}
+.switch{position:relative;width:57px;height:31px;display:inline-block}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;border-radius:30px;background:#233646;cursor:pointer;transition:.25s}
+.slider:before{content:"";position:absolute;width:23px;height:23px;left:4px;top:4px;border-radius:50%;background:#b5c5cf;transition:.25s}
+input:checked+.slider{background:#159e59;box-shadow:0 0 14px rgba(57,232,121,.3)}
+input:checked+.slider:before{transform:translateX(26px);background:white}
+.state{font-size:11px;color:var(--muted);margin-top:4px;text-align:right}
+.actions{display:flex;gap:10px;margin-top:20px}
+button{flex:1;border:0;border-radius:13px;padding:14px;font-weight:800;font-size:15px;cursor:pointer}
+.primary{background:linear-gradient(135deg,#22d96f,#13a95d);color:#03130a;box-shadow:0 7px 22px rgba(34,217,111,.2)}
+.secondary{background:#102b40;color:#dff7ff;border:1px solid #28546d}
+.sidebox{padding:16px;border-radius:15px;background:#071a2b;border:1px solid #20475e;margin-top:15px}
+.sidebox h3{margin:0 0 8px;color:var(--cyan);font-size:15px}
+.sidebox p{margin:0;color:#bdd0dc;font-size:14px;line-height:1.55}
+.steps{display:grid;gap:10px;margin-top:16px}
+.step{display:flex;gap:11px;align-items:flex-start}.num{min-width:27px;height:27px;border-radius:50%;
+ display:grid;place-items:center;background:#0c4562;color:var(--cyan);font-weight:bold}
+.step span:last-child{color:#c4d5df;font-size:13px;line-height:1.4}
+.result{display:none;margin-top:20px}
+.resultbox{padding:28px;text-align:center;border-radius:22px;border:1px solid var(--green);
+ background:linear-gradient(145deg,rgba(12,83,49,.72),rgba(5,25,28,.92));box-shadow:0 0 35px rgba(57,232,121,.12)}
+.resultbox.bad{border-color:var(--red);background:linear-gradient(145deg,rgba(100,20,31,.65),rgba(30,8,16,.92));box-shadow:0 0 35px rgba(255,93,108,.10)}
+.resulticon{font-size:55px}.resultbox h2{font-size:29px;margin:8px 0}.decision{font-size:18px;margin:8px 0 15px}.decision b{font-size:28px}
+.explain{color:#c5d7e1;line-height:1.55;max-width:720px;margin:auto}
+.mini{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.mini span{padding:8px 13px;border-radius:999px;background:#071a28;border:1px solid #285066;font-size:13px}
+.truth{margin-top:20px}
+.truth h2{margin-bottom:15px}
+table{width:100%;border-collapse:collapse;font-size:13px;overflow:hidden;border-radius:12px}
+th,td{padding:9px;border:1px solid #24485d;text-align:center}
+th{background:#0b3851;color:var(--cyan)}tr:nth-child(even){background:rgba(7,24,39,.7)}
+.v{color:var(--green);font-weight:800}.f{color:var(--red);font-weight:800}
+footer{text-align:center;color:#7894a5;font-size:12px;margin-top:24px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.card{padding:20px}}
+@media(max-width:500px){.q{grid-template-columns:auto 1fr}.switch{grid-column:2;justify-self:end}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">PROYECTO ACADÉMICO · LÓGICA PROPOSICIONAL</div>
+  <div class="logo">🛡️</div>
+  <h1>CyberSafe</h1>
+  <p>Diagnóstico interactivo para proteger tus datos personales</p>
+  <div class="formula">Fórmula de decisión: <span>D = (P ∧ Q) ∨ R</span></div>
+</header>
+
+<div class="layout">
+<section class="card">
+  <h2>🔐 Evalúa tu seguridad</h2>
+  <div class="sub">Activa el interruptor si tu respuesta es <b>SÍ</b>.</div>
+
+  <div class="q">
+    <div class="letter">P</div>
+    <div><div class="qtitle">Medidas de protección</div>
+    <div class="qdesc">¿Cuentas con medidas de protección para tus datos personales?</div></div>
+    <label class="switch"><input id="P" type="checkbox" onchange="estado()"><span class="slider"></span><div class="state" id="sp">NO</div></label>
+  </div>
+
+  <div class="q">
+    <div class="letter">Q</div>
+    <div><div class="qtitle">Contraseñas seguras</div>
+    <div class="qdesc">¿Utilizas contraseñas seguras y diferentes para cada cuenta?</div></div>
+    <label class="switch"><input id="Q" type="checkbox" onchange="estado()"><span class="slider"></span><div class="state" id="sq">NO</div></label>
+  </div>
+
+  <div class="q">
+    <div class="letter">R</div>
+    <div><div class="qtitle">Autenticación 2FA</div>
+    <div class="qdesc">¿Tienes activada la autenticación de dos factores en tus cuentas importantes?</div></div>
+    <label class="switch"><input id="R" type="checkbox" onchange="estado()"><span class="slider"></span><div class="state" id="sr">NO</div></label>
+  </div>
+
+  <div class="actions">
+    <button class="primary" onclick="evaluar()">⚡ Obtener decisión</button>
+    <button class="secondary" onclick="limpiar()">↺ Reiniciar</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>🧠 ¿Cómo funciona?</h2>
+  <div class="sub">La aplicación utiliza una proposición lógica compuesta.</div>
+  <div class="sidebox"><h3>AND · ∧</h3><p>P ∧ Q es verdadero únicamente cuando <b>P y Q</b> son verdaderas.</p></div>
+  <div class="sidebox"><h3>OR · ∨</h3><p>La expresión completa también es verdadera cuando <b>R</b> es verdadera.</p></div>
+  <div class="steps">
+    <div class="step"><span class="num">1</span><span>Responde las tres preguntas.</span></div>
+    <div class="step"><span class="num">2</span><span>La aplicación reemplaza P, Q y R por V o F.</span></div>
+    <div class="step"><span class="num">3</span><span>Se calcula D = (P ∧ Q) ∨ R.</span></div>
+    <div class="step"><span class="num">4</span><span>Obtienes una decisión y una recomendación.</span></div>
+  </div>
+</section>
+</div>
+
+<section id="resultado" class="result"></section>
+
+<section class="card truth">
+<h2>📊 Tabla de verdad</h2>
+<table>
+<thead><tr><th>P</th><th>Q</th><th>R</th><th>D = (P ∧ Q) ∨ R</th></tr></thead>
+<tbody>
+<tr><td class="v">V</td><td class="v">V</td><td class="v">V</td><td class="v">V ✓</td></tr>
+<tr><td class="v">V</td><td class="v">V</td><td class="f">F</td><td class="v">V ✓</td></tr>
+<tr><td class="v">V</td><td class="f">F</td><td class="v">V</td><td class="v">V ✓</td></tr>
+<tr><td class="v">V</td><td class="f">F</td><td class="f">F</td><td class="f">F ✗</td></tr>
+<tr><td class="f">F</td><td class="v">V</td><td class="v">V</td><td class="v">V ✓</td></tr>
+<tr><td class="f">F</td><td class="v">V</td><td class="f">F</td><td class="f">F ✗</td></tr>
+<tr><td class="f">F</td><td class="f">F</td><td class="v">V</td><td class="v">V ✓</td></tr>
+<tr><td class="f">F</td><td class="f">F</td><td class="f">F</td><td class="f">F ✗</td></tr>
+</tbody>
+</table>
+</section>
+<footer>🔒 CyberSafe · Proteger tus datos es proteger tu privacidad y tu futuro.</footer>
+</div>
+
+<script>
+function estado(){
+ ['P','Q','R'].forEach(x=>{
+   document.getElementById('s'+x.toLowerCase()).textContent=document.getElementById(x).checked?'SÍ':'NO';
+ });
+}
+function evaluar(){
+ const P=document.getElementById('P').checked,Q=document.getElementById('Q').checked,R=document.getElementById('R').checked;
+ const D=(P&&Q)||R;
+ const box=document.getElementById('resultado');box.style.display='block';
+ box.innerHTML=D?`
+ <div class="resultbox">
+   <div class="resulticon">🛡️</div><h2>¡Protección adecuada!</h2>
+   <div class="decision">Resultado lógico: <b style="color:#39e879">D = V</b></div>
+   <p class="explain">La proposición es <b>VERDADERA</b>. Cumples ambas condiciones P y Q, o tienes activa la condición R. Según el modelo de este proyecto, tus datos cuentan con una protección adecuada.</p>
+   <div class="mini"><span>P = ${P?'V':'F'}</span><span>Q = ${Q?'V':'F'}</span><span>R = ${R?'V':'F'}</span></div>
+ </div>`:`
+ <div class="resultbox bad">
+   <div class="resulticon">⚠️</div><h2>Debes mejorar tu seguridad</h2>
+   <div class="decision">Resultado lógico: <b style="color:#ff5d6c">D = F</b></div>
+   <p class="explain">La proposición es <b>FALSA</b>. Con esta combinación no se cumple la condición de protección adecuada. Se recomienda utilizar contraseñas únicas y seguras, activar 2FA y aplicar medidas de protección para tus datos.</p>
+   <div class="mini"><span>P = ${P?'V':'F'}</span><span>Q = ${Q?'V':'F'}</span><span>R = ${R?'V':'F'}</span></div>
+ </div>`;
+ box.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function limpiar(){
+ ['P','Q','R'].forEach(x=>document.getElementById(x).checked=false);
+ estado();document.getElementById('resultado').style.display='none';
+}
+estado();
+</script>
+</body>
+</html>
